@@ -15,7 +15,7 @@ app.use(cors({
 app.use("/api", emailRoute);
 
 app.get("/", (req, res) => {
-    res.send("Welcome to the Lockerwise API");
+    res.send("Welcome to the Lockerwise");
 });
 
 const PORT = process.env.PORT || 5000;
