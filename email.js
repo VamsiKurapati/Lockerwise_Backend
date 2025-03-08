@@ -1,14 +1,28 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
+const axios = require("axios");
 require("dotenv").config();
 
 const router = express.Router();
 
 router.post("/submitForm", async (req, res) => {
-    const { name, phone, email, organization, lockerCount, message } = req.body;
+    const { name, phone, email, organization, lockerCount, message, recaptcha } = req.body;
 
-    if (!name || !phone || !email || !organization || !lockerCount || !message) {
+    if (!name || !phone || !email || !organization || !lockerCount || !message || !recaptcha) {
         return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET;
+    const RECAPTCHA_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET}&response=${recaptcha}`;
+    
+    try {
+        const { data } = await axios.post(RECAPTCHA_URL);
+        if (!data.success) {
+            return res.status(400).json({ error: "Failed captcha verification" });
+        }
+    } catch (error) {
+        console.error("Error verifying captcha:", error);
+        return res.status(500).json({ error: "Failed captcha verification" });
     }
 
     try {
