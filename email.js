@@ -13,11 +13,17 @@ router.post("/submitForm", async (req, res) => {
     }
 
     const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET;
-    const RECAPTCHA_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET}&response=${recaptcha}`;
+    const RECAPTCHA_URL = `https://www.google.com/recaptcha/api/siteverify`;
     
     try {
-        const { data } = await axios.post(RECAPTCHA_URL);
-        if (!data.success) {
+        const response = await axios.post(RECAPTCHA_URL, null, {
+            params: {
+                secret: RECAPTCHA_SECRET,
+                response: recaptcha,
+            },
+        });
+        console.log("Recaptcha response:", response.data);
+        if (!response.data.success) {
             return res.status(400).json({ error: "Failed captcha verification" });
         }
     } catch (error) {
