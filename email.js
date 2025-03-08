@@ -5,9 +5,9 @@ require("dotenv").config();
 const router = express.Router();
 
 router.post("/submitForm", async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, phone, email, organization, lockerCount, message } = req.body;
 
-    if (!name || !email || !message) {
+    if (!name || !phone || !email || !organization || !lockerCount || !message) {
         return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -15,7 +15,10 @@ router.post("/submitForm", async (req, res) => {
         htmlBody = `
         <h1>New Contact Form Submission</h1>
         <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
         <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Organization:</strong> ${organization}</p>
+        <p><strong>Locker Count:</strong> ${lockerCount}</p>
         <p><strong>Message:</strong> ${message}</p>
         `;
 
@@ -32,9 +35,9 @@ router.post("/submitForm", async (req, res) => {
 
         let info = await transporter.sendMail({
             from: process.env.MAIL_USER,
-            to: "vamsikspams@gmail.com",
+            to: "support@lockerwise.com",
             subject: "Lockerwise Contact Form Submission",
-            html: htmlBody, 
+            html: htmlBody,
         });
 
         if (!info.messageId) {
